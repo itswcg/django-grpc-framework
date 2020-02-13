@@ -1,2 +1,3 @@
-
-# Additional requirements go here
+django==3.0.3
+grpcio==1.27.1
+grpcio-tools==1.27.1
