@@ -27,12 +27,12 @@ Install django-grpc-framework::
 
 Add it to your `INSTALLED_APPS`:
 
-.. code-block:: python
+::
 
     INSTALLED_APPS = [
-    ...
-    'grpc_framework',
-]
+        ...
+        'grpc_framework',
+    ]
 
 Features
 --------
