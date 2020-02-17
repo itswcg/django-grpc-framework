@@ -5,8 +5,7 @@ from greet import api_pb2 as greet_dot_api__pb2
 
 
 class GreeterStub(object):
-  """Define your service here.
-  The greeting service definition.
+  """The greeting service definition.
   """
 
   def __init__(self, channel):
@@ -28,8 +27,7 @@ class GreeterStub(object):
 
 
 class GreeterServicer(object):
-  """Define your service here.
-  The greeting service definition.
+  """The greeting service definition.
   """
 
   def SayHello(self, request, context):

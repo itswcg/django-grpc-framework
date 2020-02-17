@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
 GRPC_APPS = [
     'greet',
+    'route',
 ]
 
 MIDDLEWARE = [
