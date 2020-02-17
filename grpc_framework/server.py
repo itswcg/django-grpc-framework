@@ -33,4 +33,4 @@ class GrpcServer:
         for grpc_app in grpc_apps:
             service = Service(grpc_app)
             handler = service.find_handler()
-            handler(service.service_class, self.server)
+            handler(service.service_class(), self.server)

@@ -3,6 +3,8 @@ import logging
 from importlib import import_module
 from inspect import getmembers, isclass, isfunction
 
+from grpc_framework.decorators import signal_deco
+
 logger = logging.getLogger('grpc.request')
 
 
@@ -27,9 +29,13 @@ class Service:
         service_module = import_module(self.app + '.service')
         service_class = [mod[1] for mod in getmembers(service_module) if
                          isclass(mod[1]) and mod[1] not in self.pb_class]
+        pb_class_func_names = [name for name, fn in getmembers(self.pb_class[0]) if isfunction(fn)]
         for service in service_class:
             if issubclass(service, (self.pb_class[0])):
-                return service()
+                for name, fn in getmembers(service):
+                    if name in pb_class_func_names and isfunction(fn):
+                        setattr(service, name, signal_deco(fn))
+                return service
         else:
             raise Exception
 
