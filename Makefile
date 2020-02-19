@@ -57,3 +57,6 @@ release: clean ## package and upload a release
 sdist: clean ## package
 	python setup.py sdist
 	ls -l dist
+
+makecert: ## https://github.com/FiloSottile/mkcert
+	mkcert -key-file localhost.key -cert-file localhost.crt localhost 127.0.0.1 ::1

@@ -5,7 +5,7 @@ from inspect import getmembers, isclass, isfunction
 
 from grpc_framework.decorators import signal_deco
 
-logger = logging.getLogger('grpc.request')
+logger = logging.getLogger('grpc.service')
 
 
 class Service:

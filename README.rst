@@ -11,7 +11,8 @@ django-grpc-framework
 .. image:: https://codecov.io/gh/itswcg/django-grpc-framework/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/itswcg/django-grpc-framework
 
-gRPC for Django
+
+gRPC for Django inspired by djangorestframework.
 
 Documentation
 -------------

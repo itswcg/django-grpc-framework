@@ -16,9 +16,7 @@ class DecoMeta(type):
     @classmethod
     def deco(cls, func):
         def wrapper(*args, **kwargs):
-            print("before", func.func_name)
             result = func(*args, **kwargs)
-            print("after", func.func_name)
             return result
 
         return wrapper
@@ -35,7 +33,7 @@ def signal_deco(func):
             response = func(*args, **kwargs)
         except Exception as exc:
             grpc_request_exception.send(None, request=args[0], context=args[1], exception=exc)
-            raise
+            raise exc
         else:
             grpc_request_finished.send(None, request=args[0], context=args[1])
         return response

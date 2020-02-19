@@ -1,9 +1,9 @@
 from django.dispatch import Signal
 from django.db import close_old_connections
 
-grpc_server_init = Signal()
-grpc_server_started = Signal()
-grpc_server_shutdown = Signal()
+grpc_server_init = Signal(providing_args=["server"])
+grpc_server_started = Signal(providing_args=["server"])
+grpc_server_shutdown = Signal(providing_args=["server"])
 
 grpc_request_started = Signal(providing_args=["request", "context"])
 grpc_request_exception = Signal(providing_args=["request", "context", "exception"])

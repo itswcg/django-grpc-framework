@@ -10,6 +10,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import autoreload
 
 from grpc_framework.server import GrpcServer
+from grpc_framework.utils.credentials import load_credential_from_file, load_credential_from_args
 
 naiveip_re = re.compile(r"""^(?:
 (?P<addr>
@@ -38,13 +39,23 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--workers", dest="max_workers",
-            help="Number of maximum worker threads"
+            '--workers', dest='max_workers',
+            help='Number of maximum worker threads'
         )
 
         parser.add_argument(
             '--noreload', action='store_false', dest='use_reloader',
             help='Tells Django to NOT use the auto-reloader.',
+        )
+
+        parser.add_argument(
+            '--certificate_chain_pairs', dest='certificate_chain_pairs',
+            help='Private_key_certificate_chain_pairs'
+        )
+
+        parser.add_argument(
+            '--root_certificates', dest='root_certificates',
+            help=''
         )
 
     def handle(self, *args, **options):
@@ -78,6 +89,20 @@ class Command(BaseCommand):
         autoreload.raise_last_exception()
         max_workers = options.get('max_workers', 5)
 
+        # Handle certificate
+        ssl, server_kwargs = False, {}
+        certificate_chain_pairs = options.get('certificate_chain_pairs', '')
+        root_certificates = options.get('root_certificates', '')
+
+        if certificate_chain_pairs:
+            ssl = True
+            certificate_chain_pairs = load_credential_from_args(certificate_chain_pairs)
+            if root_certificates:
+                root_certificates = load_credential_from_file(root_certificates)
+                server_kwargs['root_certificate'] = root_certificates
+            server_kwargs['certificate_key'] = certificate_chain_pairs[0]
+            server_kwargs['certificate'] = certificate_chain_pairs[1]
+
         # 'shutdown_message' is a stealth option.
         shutdown_message = options.get('shutdown_message', '')
         quit_command = 'CTRL-BREAK' if sys.platform == 'win32' else 'CONTROL-C'
@@ -103,8 +128,9 @@ class Command(BaseCommand):
                           })
 
         try:
-            server = self.server_cls(max_workers=max_workers)
-            server.run(address=self.addr, port=self.port)
+            server = self.server_cls(max_workers=max_workers, ssl=ssl)
+            with server.start(self.addr, self.port, **server_kwargs) as ser:
+                ser.wait_for_termination()
         except OSError as e:
             # Use helpful error messages instead of ugly tracebacks.
             ERRORS = {

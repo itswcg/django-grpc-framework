@@ -1,32 +1,58 @@
 from concurrent import futures
+import contextlib
+import logging
+
 import grpc
 
 from grpc_framework.settings import grpc_settings
 from grpc_framework.service import Service
+from grpc_framework.signals import grpc_server_init, grpc_server_started, grpc_server_shutdown
+
+logger = logging.getLogger('grpc.server')
 
 
 class GrpcServer:
     """GrpcServer"""
 
-    def __init__(self, max_workers=5,
-                 handlers=None,
-                 interceptors=None,
-                 options=None,
-                 maximum_concurrent_rpcs=None,
-                 compression=None):
-        self.interceptors = interceptors or self.add_interceptors()
-        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers), handlers,
-                                  self.interceptors, options,
-                                  maximum_concurrent_rpcs, compression)
+    def __init__(self, max_workers=5, ssl=False):
+        self.max_workers = max_workers
+        self.ssl = ssl
+        self.interceptors = self.add_interceptors()
+        self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=self.max_workers),
+                                  interceptors=self.interceptors)
+        grpc_server_init.send(None, server=self.server)
 
     def add_interceptors(self):
-        pass
+        interceptors = []
+        for interceptor in grpc_settings.INTERCEPTORS:
+            interceptors.append(interceptor[0](**interceptor[1]))
+        return interceptors
 
-    def run(self, address, port, *args, **kwargs):
+    @contextlib.contextmanager
+    def start(self, address, port, *args, **kwargs):
         self.add_services()
-        self.server.add_insecure_port(f'{address}:{port}')
+        if self.ssl == True:
+            server_certificate_key = kwargs.pop('certificate_key', None)
+            server_certificate = kwargs.pop('certificate', None)
+            root_certificate = kwargs.pop('root_certificate', None)
+            if not server_certificate_key or not server_certificate:
+                raise
+
+            require_client_auth = True if root_certificate else False
+            server_credentials = grpc.ssl_server_credentials(((server_certificate_key, server_certificate),),
+                                                             root_certificate, require_client_auth)
+            self.server.add_secure_port(f'{address}:{port}', server_credentials)
+
+        else:
+            self.server.add_insecure_port(f'{address}:{port}')
+
+        grpc_server_started.send(None, server=self.server)
         self.server.start()
-        self.server.wait_for_termination()
+
+        try:
+            yield self.server
+        finally:
+            grpc_server_shutdown.send(None, server=self.server)
 
     def add_services(self):
         grpc_apps = grpc_settings.grpc_apps

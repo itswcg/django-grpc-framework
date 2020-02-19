@@ -3,13 +3,14 @@ from django.test.signals import setting_changed
 from django.utils.module_loading import import_string
 
 DEFAULTS = {
-    'DEFAULT_AUTH_CLASSES': [
-        'rest_framework.auth.',
+    'INTERCEPTORS': [
+        ('grpc_framework.interceptors.log.LoggerInterceptor', {}),
+        # ('grpc_framework.interceptors.header.SetHeaderInterceptor', {})
     ]
 }
 
 IMPORT_STRINGS = [
-    'DEFAULT_RENDERER_CLASSES',
+    'INTERCEPTORS',
 ]
 
 
@@ -23,7 +24,7 @@ def perform_import(val, setting_name):
     elif isinstance(val, str):
         return import_from_string(val, setting_name)
     elif isinstance(val, (list, tuple)):
-        return [import_from_string(item, setting_name) for item in val]
+        return [(import_from_string(item[0], setting_name), item[1]) for item in val]
     return val
 
 
@@ -34,7 +35,7 @@ def import_from_string(val, setting_name):
     try:
         return import_string(val)
     except ImportError as e:
-        msg = "Could not import '%s' for API setting '%s'. %s: %s." % (val, setting_name, e.__class__.__name__, e)
+        msg = "Could not import '%s' for GRPC setting '%s'. %s: %s." % (val, setting_name, e.__class__.__name__, e)
         raise ImportError(msg)
 
 
@@ -55,7 +56,7 @@ class GrpcSettings:
     @property
     def user_settings(self):
         if not hasattr(self, '_user_settings'):
-            self._user_settings = getattr(settings, 'REST_FRAMEWORK', {})
+            self._user_settings = getattr(settings, 'GRPC_FRAMEWORK', {})
         return self._user_settings
 
     def __getattr__(self, attr):
@@ -89,10 +90,10 @@ class GrpcSettings:
 grpc_settings = GrpcSettings(None, DEFAULTS)
 
 
-def reload_api_settings(*args, **kwargs):
+def reload_grpc_settings(*args, **kwargs):
     setting = kwargs['setting']
-    if setting == 'REST_FRAMEWORK':
+    if setting == 'GRPC_FRAMEWORK':
         grpc_settings.reload()
 
 
-setting_changed.connect(reload_api_settings)
+setting_changed.connect(reload_grpc_settings)
