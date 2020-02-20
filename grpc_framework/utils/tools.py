@@ -1,6 +1,5 @@
 import os
 import sys
-import pkg_resources
 from importlib import import_module
 
 from grpc_tools import protoc
@@ -24,12 +23,11 @@ class Generation:
         prefix = relative_path.replace('{}'.format(self.app), '')
         proto_file = '{}/api.proto'.format(self.app)
 
-        command = [
-                      'grpc_tools.protoc',
-                      '-I./{}'.format(prefix),
-                      '--python_out=./{}'.format(prefix),
-                      '--grpc_python_out=./{}'.format(prefix),
-                  ] + [proto_file]
+        command = ['grpc_tools.protoc',
+                   '-I./{}'.format(prefix),
+                   '--python_out=./{}'.format(prefix),
+                   '--grpc_python_out=./{}'.format(prefix),
+                   ] + [proto_file]
         if protoc.main(command) != 0:
             if strict_mode:
                 raise Exception('error: {} failed'.format(command))

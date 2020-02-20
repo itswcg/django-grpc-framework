@@ -7,6 +7,7 @@ import grpc
 from grpc_framework.settings import grpc_settings
 from grpc_framework.service import Service
 from grpc_framework.signals import grpc_server_init, grpc_server_started, grpc_server_shutdown
+from grpc_framework.utils.log import configure_logging
 
 logger = logging.getLogger('grpc.server')
 
@@ -21,6 +22,7 @@ class GrpcServer:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=self.max_workers),
                                   interceptors=self.interceptors)
         grpc_server_init.send(None, server=self.server)
+        configure_logging('logging.config.dictConfig', None)
 
     def add_interceptors(self):
         interceptors = []
@@ -31,7 +33,7 @@ class GrpcServer:
     @contextlib.contextmanager
     def start(self, address, port, *args, **kwargs):
         self.add_services()
-        if self.ssl == True:
+        if self.ssl is True:
             server_certificate_key = kwargs.pop('certificate_key', None)
             server_certificate = kwargs.pop('certificate', None)
             root_certificate = kwargs.pop('root_certificate', None)

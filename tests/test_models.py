@@ -10,7 +10,7 @@ Tests for `django-grpc-framework` models module.
 
 from django.test import TestCase
 
-from grpc_framework import models
+from grpc_framework import models # noqa
 
 
 class TestGrpc_framework(TestCase):

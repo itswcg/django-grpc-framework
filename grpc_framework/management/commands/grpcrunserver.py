@@ -1,7 +1,6 @@
 import errno
 import os
 import re
-import socket
 import sys
 from datetime import datetime
 
@@ -115,7 +114,7 @@ class Command(BaseCommand):
         now = datetime.now().strftime('%B %d, %Y - %X')
         self.stdout.write(now)
         self.stdout.write((
-                              "Django version %(version)s, using settings %(settings)r\n"
+                              "Django version %(version)s, using settings %(settings)r\n" # noqa
                               "Starting development server at %(protocol)s:%(addr)s:%(port)s\n"
                               "Quit the server with %(quit_command)s.\n"
                           ) % {
