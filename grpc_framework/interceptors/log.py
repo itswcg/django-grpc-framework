@@ -1,11 +1,12 @@
-import logging
-
+"""
+log interceptor
+"""
 import grpc
-
-logger = logging.getLogger('grpc.server')
+from grpc_framework.decorators import log_deco
 
 
 class LoggerInterceptor(grpc.ServerInterceptor):
+
+    @log_deco
     def intercept_service(self, continuation, handler_call_details):
-        logger.info(handler_call_details.method)
         return continuation(handler_call_details)

@@ -1,11 +1,23 @@
+"""
+Settings for gRPC framework are namespaced in the GRPC_FRAMEWORK setting.
+For example your project's `settings` file might look like this:
+
+GRPC_FRAMEWORK = {
+    'INTERCEPTORS': [
+       ('grpc_framework.interceptors.log.LoggerInterceptor', {}),
+    ]
+}
+
+This module provides the `grpc_setting` object.
+"""
 from django.conf import settings
 from django.test.signals import setting_changed
 from django.utils.module_loading import import_string
 
 DEFAULTS = {
+    # Interceptors
     'INTERCEPTORS': [
         ('grpc_framework.interceptors.log.LoggerInterceptor', {}),
-        # ('grpc_framework.interceptors.header.SetHeaderInterceptor', {})
     ]
 }
 
@@ -41,7 +53,7 @@ def import_from_string(val, setting_name):
 
 class GrpcSettings:
     """
-    GrpcSettings
+    A settings objects, that allows GRPC settings to be accessed as properties.
     """
 
     def __init__(self, defaults=None, import_strings=None):

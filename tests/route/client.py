@@ -6,8 +6,8 @@ import json
 
 import grpc
 
-from route import api_pb2
-from route import api_pb2_grpc
+from route import route_pb2
+from route import route_pb2_grpc
 
 
 def read_route_guide_database():
@@ -20,9 +20,9 @@ def read_route_guide_database():
     feature_list = []
     with open("route_db.json") as route_guide_db_file:
         for item in json.load(route_guide_db_file):
-            feature = api_pb2.Feature(
+            feature = route_pb2.Feature(
                 name=item["name"],
-                location=api_pb2.Point(
+                location=route_pb2.Point(
                     latitude=item["location"]["latitude"],
                     longitude=item["location"]["longitude"]))
             feature_list.append(feature)
@@ -30,9 +30,9 @@ def read_route_guide_database():
 
 
 def make_route_note(message, latitude, longitude):
-    return api_pb2.RouteNote(
+    return route_pb2.RouteNote(
         message=message,
-        location=api_pb2.Point(latitude=latitude, longitude=longitude))
+        location=route_pb2.Point(latitude=latitude, longitude=longitude))
 
 
 def guide_get_one_feature(stub, point):
@@ -49,14 +49,14 @@ def guide_get_one_feature(stub, point):
 
 def guide_get_feature(stub):
     guide_get_one_feature(
-        stub, api_pb2.Point(latitude=409146138, longitude=-746188906))
-    guide_get_one_feature(stub, api_pb2.Point(latitude=0, longitude=0))
+        stub, route_pb2.Point(latitude=409146138, longitude=-746188906))
+    guide_get_one_feature(stub, route_pb2.Point(latitude=0, longitude=0))
 
 
 def guide_list_features(stub):
-    rectangle = api_pb2.Rectangle(
-        lo=api_pb2.Point(latitude=400000000, longitude=-750000000),
-        hi=api_pb2.Point(latitude=420000000, longitude=-730000000))
+    rectangle = route_pb2.Rectangle(
+        lo=route_pb2.Point(latitude=400000000, longitude=-750000000),
+        hi=route_pb2.Point(latitude=420000000, longitude=-730000000))
     print("Looking for features between 40, -75 and 42, -73")
 
     features = stub.ListFeatures(rectangle)
@@ -108,7 +108,7 @@ def run():
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
     with grpc.insecure_channel('localhost:50051') as channel:
-        stub = api_pb2_grpc.RouteGuideStub(channel)
+        stub = route_pb2_grpc.RouteGuideStub(channel)
         print("-------------- GetFeature --------------")
         guide_get_feature(stub)
         print("-------------- ListFeatures --------------")

@@ -1,6 +1,7 @@
 import sys
 
 from django.core.management import BaseCommand
+
 from grpc_framework.utils.tools import Generation
 from grpc_framework.settings import grpc_settings
 

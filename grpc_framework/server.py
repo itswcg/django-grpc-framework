@@ -1,15 +1,18 @@
+"""
+Server for grpc_framework.
+"""
 from concurrent import futures
 import contextlib
-import logging
 
 import grpc
+
+from django.conf import settings
 
 from grpc_framework.settings import grpc_settings
 from grpc_framework.service import Service
 from grpc_framework.signals import grpc_server_init, grpc_server_started, grpc_server_shutdown
 from grpc_framework.utils.log import configure_logging
-
-logger = logging.getLogger('grpc.server')
+from grpc_framework.exceptions import ServerException
 
 
 class GrpcServer:
@@ -22,7 +25,7 @@ class GrpcServer:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=self.max_workers),
                                   interceptors=self.interceptors)
         grpc_server_init.send(None, server=self.server)
-        configure_logging('logging.config.dictConfig', None)
+        configure_logging(settings.LOGGING_CONFIG, settings.LOGGING)
 
     def add_interceptors(self):
         interceptors = []
@@ -38,7 +41,7 @@ class GrpcServer:
             server_certificate = kwargs.pop('certificate', None)
             root_certificate = kwargs.pop('root_certificate', None)
             if not server_certificate_key or not server_certificate:
-                raise
+                raise ServerException
 
             require_client_auth = True if root_certificate else False
             server_credentials = grpc.ssl_server_credentials(((server_certificate_key, server_certificate),),

@@ -1,14 +1,14 @@
 import grpc
-from greet import api_pb2_grpc
-from greet import api_pb2
+from greet import greet_pb2
+from greet import greet_pb2_grpc
 
 
 def run():
     channel = grpc.insecure_channel('localhost:50051')
-    stub = api_pb2_grpc.GreeterStub(channel)
-    response = stub.SayHello(api_pb2.HelloRequest(name='you'))
+    stub = greet_pb2_grpc.GreeterStub(channel)
+    response = stub.SayHello(greet_pb2.HelloRequest(name='you'))
     print("Greeter client received: " + response.message)
-    response = stub.SayHelloAgain(api_pb2.HelloRequest(name='you'))
+    response = stub.SayHelloAgain(greet_pb2.HelloRequest(name='you'))
     print("Greeter client received: " + response.message)
 
 

@@ -1,3 +1,6 @@
+"""
+logging utils
+"""
 import logging
 import logging.config
 
@@ -5,7 +8,7 @@ from django.conf import settings
 from django.core.management.color import color_style
 from django.utils.module_loading import import_string
 
-request_logger = logging.getLogger('grpc.request')
+logger = logging.getLogger('grpc.server')
 
 DEFAULT_LOGGING = {
     'version': 1,
@@ -20,8 +23,8 @@ DEFAULT_LOGGING = {
     },
     'formatters': {
         'grpc.server': {
-            '()': 'django.utils.log.ServerFormatter',
-            'format': '[{server_time}] {message}',
+            '()': 'grpc_framework.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message} {resp_code} {resp_time}',
             'style': '{',
         }
     },
@@ -47,22 +50,16 @@ DEFAULT_LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        '': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        }
     }
 }
 
 
 def configure_logging(logging_config, logging_settings):
     if logging_config:
-        # First find the logging configuration function ...
         logging_config_func = import_string(logging_config)
 
         logging.config.dictConfig(DEFAULT_LOGGING)
 
-        # ... then invoke it with the logging settings
         if logging_settings:
             logging_config_func(logging_settings)
 
@@ -84,8 +81,12 @@ class ServerFormatter(logging.Formatter):
 
     def format(self, record):
         msg = record.msg
-
-        msg = self.style.HTTP_SUCCESS(msg)
+        code = getattr(record, 'resp_code', None)
+        if code:
+            if code == 'success':
+                msg = self.style.HTTP_SUCCESS(msg)
+            else:
+                msg = self.style.HTTP_SERVER_ERROR(msg)
 
         if self.uses_server_time() and not hasattr(record, 'server_time'):
             record.server_time = self.formatTime(record, self.datefmt)
@@ -95,3 +96,20 @@ class ServerFormatter(logging.Formatter):
 
     def uses_server_time(self):
         return self._fmt.find('{server_time}') >= 0
+
+
+def log_response(message, response, logger=logger, level=None, exc_info=None):
+    if level is None:
+        if response['code'] == 'success':
+            level = 'info'
+        else:
+            level = 'error'
+
+    getattr(logger, level)(
+        message,
+        extra={
+            'resp_time': response['resp_time'],
+            'resp_code': response['code'],
+        },
+        exc_info=exc_info
+    )

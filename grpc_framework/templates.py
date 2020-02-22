@@ -1,3 +1,6 @@
+"""
+GrpcTemplateCommand
+"""
 import os
 import grpc_framework
 from django.core.management.templates import TemplateCommand

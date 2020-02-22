@@ -1,3 +1,6 @@
+"""
+Generation class for grpc_tools.protoc
+"""
 import os
 import sys
 from importlib import import_module
@@ -21,7 +24,7 @@ class Generation:
         base_dir = settings.BASE_DIR
         relative_path = os.path.relpath(app_root, base_dir)
         prefix = relative_path.replace('{}'.format(self.app), '')
-        proto_file = '{}/api.proto'.format(self.app)
+        proto_file = '{}/{}.proto'.format(self.app, self.app)
 
         command = ['grpc_tools.protoc',
                    '-I./{}'.format(prefix),

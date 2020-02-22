@@ -2,8 +2,8 @@ import time
 import math
 import json
 
-from route import api_pb2
-from route import api_pb2_grpc
+from route import route_pb2
+from route import route_pb2_grpc
 
 
 def read_route_guide_database():
@@ -16,9 +16,9 @@ def read_route_guide_database():
     feature_list = []
     with open("tests/route/route_db.json") as route_guide_db_file:
         for item in json.load(route_guide_db_file):
-            feature = api_pb2.Feature(
+            feature = route_pb2.Feature(
                 name=item["name"],
-                location=api_pb2.Point(
+                location=route_pb2.Point(
                     latitude=item["location"]["latitude"],
                     longitude=item["location"]["longitude"]))
             feature_list.append(feature)
@@ -54,7 +54,7 @@ def get_distance(start, end):
     return R * c
 
 
-class RouteGuideServicer(api_pb2_grpc.RouteGuideServicer):
+class RouteGuideServicer(route_pb2_grpc.RouteGuideServicer):
     """Provides methods that implement functionality of route guide server."""
 
     def __init__(self):
@@ -63,7 +63,7 @@ class RouteGuideServicer(api_pb2_grpc.RouteGuideServicer):
     def GetFeature(self, request, context):
         feature = get_feature(self.db, request)
         if feature is None:
-            return api_pb2.Feature(name="", location=request)
+            return route_pb2.Feature(name="", location=request)
         else:
             return feature
 
@@ -93,7 +93,7 @@ class RouteGuideServicer(api_pb2_grpc.RouteGuideServicer):
             prev_point = point
 
         elapsed_time = time.time() - start_time
-        return api_pb2.RouteSummary(point_count=point_count,
+        return route_pb2.RouteSummary(point_count=point_count,
                                     feature_count=feature_count,
                                     distance=int(distance),
                                     elapsed_time=int(elapsed_time))

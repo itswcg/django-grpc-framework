@@ -22,7 +22,6 @@ naiveip_re = re.compile(r"""^(?:
 class Command(BaseCommand):
     help = "Starts a GRPC server"
 
-    # Validation is called explicitly each time the server is reloaded.
     requires_system_checks = False
     stealth_options = ('shutdown_message',)
 
@@ -114,7 +113,7 @@ class Command(BaseCommand):
         now = datetime.now().strftime('%B %d, %Y - %X')
         self.stdout.write(now)
         self.stdout.write((
-                              "Django version %(version)s, using settings %(settings)r\n" # noqa
+                              "Django version %(version)s, using settings %(settings)r\n"  # noqa
                               "Starting development server at %(protocol)s:%(addr)s:%(port)s\n"
                               "Quit the server with %(quit_command)s.\n"
                           ) % {

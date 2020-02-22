@@ -1,7 +1,12 @@
-import types
+"""
+grpc_framework decorators.
+"""
 from functools import wraps
+import types
+import time
 
 from grpc_framework.signals import grpc_request_started, grpc_request_finished, grpc_request_exception
+from grpc_framework.utils.log import log_response
 
 
 class DecoMeta(type):
@@ -37,6 +42,33 @@ def signal_deco(func):
         else:
             grpc_request_finished.send(None, request=args[0], context=args[1])
         return response
+
+    return inner
+
+
+def log_deco(func):
+    if func is None:
+        return
+
+    @wraps(func)
+    def inner(*args, **kwargs):
+        code = 'success'
+        start_time = time.time()
+        handler_call_details = args[2]
+
+        try:
+            results = func(*args, **kwargs)
+        except Exception as exc:
+            code = 'error'
+            raise exc
+        finally:
+            resp_time = round((time.time() - start_time), 2)
+            response = {
+                'code': code,
+                'resp_time': resp_time
+            }
+            log_response(handler_call_details.method, response)
+        return results
 
     return inner
 

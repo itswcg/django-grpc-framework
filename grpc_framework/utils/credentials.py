@@ -1,9 +1,22 @@
+"""
+load_credential utils
+"""
+
+
 def load_credential_from_file(filepath):
     with open(filepath, 'rb') as f:
         return f.read()
 
 
 def load_credential_from_args(args):
+    """load credential from command
+
+    Args:
+        args(str): str join `,`
+
+    Returns:
+        list of credential content
+    """
     if ',' not in args:
         raise
     file_path_list = args.split(',')
