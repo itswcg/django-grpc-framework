@@ -40,6 +40,13 @@ Create your grpc app::
 
 Define your proto in <app_name>/<app_name>.proto.
 
+Add your app to GRPC_APPS:
+::
+
+    GRPC_APPS = [
+        '<app_name>',
+    ]
+
 Generate protocol buffer compiler::
 
     python manage.py grpcgenerate
