@@ -11,8 +11,7 @@ django-grpc-framework
 .. image:: https://codecov.io/gh/itswcg/django-grpc-framework/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/itswcg/django-grpc-framework
 
-
-gRPC for Django inspired by djangorestframework.
+**gRPC for Django inspired by djangorestframework.**
 
 Documentation
 -------------
@@ -35,10 +34,21 @@ Add it to your `INSTALLED_APPS`:
         'grpc_framework',
     ]
 
-Features
---------
+Create your grpc app::
 
-* TODO
+    python manage.py grpcstartapp <app_name>
+
+Define your proto in <app_name>/<app_name>.proto.
+
+Generate protocol buffer compiler::
+
+    python manage.py grpcgenerate
+
+Create your service in <app_name>/service.py.
+
+Start a grpc server with your apps::
+
+    python manage.py grpcrunserver
 
 Running Tests
 -------------

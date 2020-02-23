@@ -23,10 +23,10 @@ def get_version(*file_paths):
 
 version = get_version("grpc_framework", "__init__.py")
 
-
 if sys.argv[-1] == 'publish':
     try:
         import wheel
+
         print("Wheel version: ", wheel.__version__)
     except ImportError:
         print('Wheel library missing. Please run "pip install wheel"')
@@ -43,6 +43,7 @@ if sys.argv[-1] == 'tag':
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
+requirements = open('requirements.txt').readlines()
 
 setup(
     name='django-grpc-framework',
@@ -56,7 +57,7 @@ setup(
         'grpc_framework',
     ],
     include_package_data=True,
-    install_requires=[],
+    install_requires=requirements,
     license="Apache Software License 2.0",
     zip_safe=False,
     keywords='django-grpc-framework',

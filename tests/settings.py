@@ -33,12 +33,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'grpc_framework',
-    'core'
 ]
 
 GRPC_APPS = [
-    'greet',
-    'route',
+    'example',
 ]
 
 MIDDLEWARE = [

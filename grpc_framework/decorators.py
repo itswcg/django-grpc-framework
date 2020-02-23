@@ -62,7 +62,7 @@ def log_deco(func):
             code = 'error'
             raise exc
         finally:
-            resp_time = round((time.time() - start_time), 2)
+            resp_time = round(((time.time() - start_time)) * 1000)
             response = {
                 'code': code,
                 'resp_time': resp_time
