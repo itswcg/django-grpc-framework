@@ -19,6 +19,5 @@ To run this example, follow these instructions:
 		
 4. Run the server
 
-		python manage.py runserver
+		python manage.py grpcrunserver
 		
-5. Access from the browser at `http://127.0.0.1:8000`

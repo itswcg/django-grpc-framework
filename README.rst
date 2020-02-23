@@ -57,6 +57,11 @@ Start a grpc server with your apps::
 
     python manage.py grpcrunserver
 
+Todo
+----------
+* support async
+* more interceptors
+
 Running Tests
 -------------
 

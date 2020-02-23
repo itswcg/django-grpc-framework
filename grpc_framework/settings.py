@@ -99,7 +99,7 @@ class GrpcSettings:
             delattr(self, '_user_settings')
 
 
-grpc_settings = GrpcSettings(None, DEFAULTS)
+grpc_settings = GrpcSettings()
 
 
 def reload_grpc_settings(*args, **kwargs):
