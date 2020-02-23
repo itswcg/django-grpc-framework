@@ -43,7 +43,6 @@ if sys.argv[-1] == 'tag':
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
-requirements = open('requirements.txt').readlines()
 
 setup(
     name='django-grpc-framework',
@@ -57,7 +56,7 @@ setup(
         'grpc_framework',
     ],
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=['django>=2.1', 'grpcio==1.27.1', 'grpcio-tools==1.27.1'],
     license="Apache Software License 2.0",
     zip_safe=False,
     keywords='django-grpc-framework',
