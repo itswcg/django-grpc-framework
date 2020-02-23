@@ -2,25 +2,27 @@
 Usage
 =====
 
-To use django-grpc-framework in a project, add it to your `INSTALLED_APPS`:
+Interceptors
+-----------------
+Add interceptor to GRPC_FRAMEWORK like this:
+::
 
-.. code-block:: python
+    GRPC_FRAMEWORK = {
+        'INTERCEPTORS': [
+            ('grpc_framework.interceptors.log.LoggerInterceptor', {}),
+        ]
+    }
 
-    INSTALLED_APPS = (
-        ...
-        'grpc_framework.apps.GrpcFrameworkConfig',
-        ...
-    )
+Grpc_framework provides log and header interceptor, you can define it yourself, then add it.
 
-Add django-grpc-framework's URL patterns:
+Credentials
+--------------
+You can start a ssl server by command::
 
-.. code-block:: python
+    python manage.py runserver --certificate_chain_pairs=server.crt,server.key
 
-    from grpc_framework import urls as grpc_framework_urls
+Important
+----------
+You can't rename any files by executing this command::
 
-
-    urlpatterns = [
-        ...
-        url(r'^', include(grpc_framework_urls)),
-        ...
-    ]
+    python manage.py grpcstartapp <app_name>
