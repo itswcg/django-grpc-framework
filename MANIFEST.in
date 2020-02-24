@@ -3,4 +3,4 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
-recursive-include grpc_framework *.html *.png *.gif *js *.css *jpg *jpeg *svg *py
+recursive-include grpc_framework *.html *.png *.gif *js *.css *jpg *jpeg *svg *py *py-tpl *proto
