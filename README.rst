@@ -8,6 +8,9 @@ django-grpc-framework
 .. image:: https://travis-ci.org/itswcg/django-grpc-framework.svg?branch=master
     :target: https://travis-ci.org/itswcg/django-grpc-framework
 
+.. image:: https://readthedocs.org/projects/django-grpc-framework/badge/?version=latest
+    :target: https://django-grpc-framework.readthedocs.io/en/latest/?badge=latest
+
 .. image:: https://codecov.io/gh/itswcg/django-grpc-framework/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/itswcg/django-grpc-framework
 

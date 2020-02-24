@@ -21,7 +21,8 @@ import sys, os
 cwd = os.getcwd()
 parent = os.path.dirname(cwd)
 sys.path.append(parent)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
+from django.conf import settings
+settings.configure()
 import grpc_framework
 
 # -- General configuration -----------------------------------------------------
