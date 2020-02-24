@@ -60,3 +60,6 @@ sdist: clean ## package
 
 makecert: ## https://github.com/FiloSottile/mkcert
 	mkcert -key-file localhost.key -cert-file localhost.crt localhost 127.0.0.1 ::1
+
+version:
+    bumpversion minor --config-file=setup.cfg
